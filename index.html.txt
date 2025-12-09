@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Astrologist</title>
+    <style>
+        /* THE AESTHETIC (CSS) */
+        body {
+            background-color: #0F172A; /* Midnight Blue */
+            color: #E2E8F0;
+            font-family: 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #C0A062; /* Antique Gold */
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background-color: #1E293B;
+            border: 1px solid #C0A062;
+            color: #FFF;
+            border-radius: 4px;
+            font-family: sans-serif;
+            box-sizing: border-box; /* Ensures padding doesn't widen element */
+        }
+
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #C0A062;
+            color: #0F172A;
+            border: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #D4B478;
+        }
+
+        #output {
+            display: none; /* Hidden by default */
+            background-color: #1E293B;
+            padding: 20px;
+            border-left: 4px solid #C0A062;
+            text-align: left;
+            line-height: 1.6;
+            white-space: pre-wrap; /* Preserves formatting */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>THE ASTROLOGIST</h1>
+        
+        <input type="text" id="dateInput" placeholder="Date of Birth (MM/DD)">
+        <textarea id="questionInput" placeholder="What do you seek?"></textarea>
+        
+        <button onclick="consultStars()">Consult the Stars</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        /* THE LOGIC (JavaScript) */
+        
+        function consultStars() {
+            const dateStr = document.getElementById('dateInput').value;
+            const question = document.getElementById('questionInput').value.toLowerCase();
+            const outputDiv = document.getElementById('output');
+
+            if (!dateStr || !question) {
+                alert("The stars require your data.");
+                return;
+            }
+
+            // 1. Determine Sign
+            const sign = getZodiacSign(dateStr);
+            
+            // 2. Oracle Logic
+            const answer = getOracleAnswer(sign, question);
+
+            // 3. Reveal
+            outputDiv.style.display = 'block';
+            outputDiv.textContent = answer;
+        }
+
+        function getZodiacSign(date) {
+            // Simple MM/DD parser
+            const parts = date.split('/');
+            if (parts.length < 2) return "Unknown";
+            const m = parseInt(parts[0]);
+            const d = parseInt(parts[1]);
+
+            if ((m == 1 && d >= 20) || (m == 2 && d <= 18)) return "Aquarius";
+            if ((m == 2 && d >= 19) || (m == 3 && d <= 20)) return "Pisces";
+            if ((m == 3 && d >= 21) || (m == 4 && d <= 19)) return "Aries";
+            if ((m == 4 && d >= 20) || (m == 5 && d <= 20)) return "Taurus";
+            if ((m == 5 && d >= 21) || (m == 6 && d <= 20)) return "Gemini";
+            if ((m == 6 && d >= 21) || (m == 7 && d <= 22)) return "Cancer";
+            if ((m == 7 && d >= 23) || (m == 8 && d <= 22)) return "Leo";
+            if ((m == 8 && d >= 23) || (m == 9 && d <= 22)) return "Virgo";
+            if ((m == 9 && d >= 23) || (m == 10 && d <= 22)) return "Libra";
+            if ((m == 10 && d >= 23) || (m == 11 && d <= 21)) return "Scorpio";
+            if ((m == 11 && d >= 22) || (m == 12 && d <= 21)) return "Sagittarius";
+            if ((m == 12 && d >= 22) || (m == 1 && d <= 19)) return "Capricorn";
+            return "Unknown";
+        }
+
+        function getOracleAnswer(sign, q) {
+            const isEarth = ["Taurus", "Virgo", "Capricorn"].includes(sign);
+            const isWater = ["Cancer", "Scorpio", "Pisces"].includes(sign);
+            
+            let advice = "";
+
+            if (q.includes("move") || q.includes("home") || q.includes("live")) {
+                if (isEarth) {
+                    advice = `The stars favor this foundation. As a ${sign}, you thrive where you can plant roots. Look for financial stability in this move. The omen is solid.`;
+                } else if (isWater) {
+                    advice = `Follow the flow of your intuition. Does the new location feel like a sanctuary? If so, the move is a healing transition.`;
+                } else {
+                    advice = `Movement brings new energy. Ensure you are not running away, but running toward a new horizon.`;
+                }
+            } else if (q.includes("love") || q.includes("marry")) {
+                if (isEarth) {
+                    advice = `Stability is your love language. Do not rush. If it is built on stone, it will last. If it is built on sand, wait.`;
+                } else {
+                    advice = `The heart is in transit. Look for a partner who challenges your mind but respects your freedom.`;
+                }
+            } else {
+                advice = `The ${sign} sun shines upon this query. The universe suggests patience. Trust your initial instinct, for it is the whisper of the stars.`;
+            }
+
+            return `--- THE REPORT ---\n\nSubject Sign: ${sign}\nQuery Analysis: Complete\n\nVERDICT:\n${advice}`;
+        }
+    </script>
+</body>
+</html>
