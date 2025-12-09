@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A"
+    android:padding="24dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="THE ASTROLOGIST"
+            android:textColor="#C0A062" 
+            android:textSize="28sp"
+            android:letterSpacing="0.2"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"/>
+        <EditText
+            android:id="@+id/inputDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date of Birth (MM/DD)"
+            android:textColor="#E2E8F0"
+            android:textColorHint="#64748B"
+            android:backgroundTint="#C0A062"
+            android:inputType="date"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/inputQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="What do you seek?"
+            android:textColor="#E2E8F0"
+            android:textColorHint="#64748B"
+            android:backgroundTint="#C0A062"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/consultButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Consult the Stars"
+            android:backgroundTint="#1E293B"
+            android:textColor="#C0A062"
+            android:layout_marginBottom="32dp"/>
+
+        <TextView
+            android:id="@+id/outputResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#F1F5F9"
+            android:textSize="16sp"
+            android:lineSpacingExtra="6dp"
+            android:textAlignment="center"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</ScrollView>

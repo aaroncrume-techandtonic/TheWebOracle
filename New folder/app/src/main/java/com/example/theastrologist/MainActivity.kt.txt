@@ -1,0 +1,105 @@
+package com.example.theastrologist
+
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import java.util.*
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val inputDate = findViewById<EditText>(R.id.inputDate)
+        val inputQuestion = findViewById<EditText>(R.id.inputQuestion)
+        val consultButton = findViewById<Button>(R.id.consultButton)
+        val outputText = findViewById<TextView>(R.id.outputResult)
+
+        consultButton.setOnClickListener {
+            val dateStr = inputDate.text.toString()
+            val question = inputQuestion.text.toString().lowercase()
+
+            if (dateStr.isEmpty() || question.isEmpty()) {
+                Toast.makeText(this, "The stars require your data.", Toast.LENGTH_SHORT).show()
+            } else {
+                // 1. Determine Sign
+                val sign = getZodiacSign(dateStr)
+                
+                // 2. Oracle Logic
+                val answer = consultTheOracle(sign, question)
+
+                // 3. Reveal
+                outputText.text = answer
+                outputText.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    // A simplified Zodiac Calculator
+    private fun getZodiacSign(date: String): String {
+        // Expected format MM/DD. Simplified logic for the example.
+        val parts = date.split("/")
+        if (parts.size < 2) return "Unknown"
+        val month = parts[0].toInt()
+        val day = parts[1].toInt()
+
+        return when (month) {
+            1 -> if (day < 20) "Capricorn" else "Aquarius"
+            2 -> if (day < 19) "Aquarius" else "Pisces"
+            3 -> if (day < 21) "Pisces" else "Aries"
+            4 -> if (day < 20) "Aries" else "Taurus"
+            5 -> if (day < 21) "Taurus" else "Gemini"
+            6 -> if (day < 21) "Gemini" else "Cancer"
+            7 -> if (day < 23) "Cancer" else "Leo"
+            8 -> if (day < 23) "Leo" else "Virgo"
+            9 -> if (day < 23) "Virgo" else "Libra"
+            10 -> if (day < 23) "Libra" else "Scorpio"
+            11 -> if (day < 22) "Scorpio" else "Sagittarius"
+            12 -> if (day < 22) "Sagittarius" else "Capricorn"
+            else -> "Unknown"
+        }
+    }
+
+    private fun consultTheOracle(sign: String, question: String): String {
+        // Logic: Match Keyword + Element of Sign
+        
+        val isEarth = listOf("Taurus", "Virgo", "Capricorn").contains(sign)
+        val isWater = listOf("Cancer", "Scorpio", "Pisces").contains(sign)
+        val isFire = listOf("Aries", "Leo", "Sagittarius").contains(sign)
+        val isAir = listOf("Gemini", "Libra", "Aquarius").contains(sign)
+
+        var advice = ""
+
+        // QUESTION ANALYSIS
+        if (question.contains("move") || question.contains("house") || question.contains("live")) {
+            advice = if (isEarth) {
+                "The stars favor this foundation. As a $sign, you thrive where you can plant roots. Look for financial stability in this move. The omen is solid."
+            } else if (isWater) {
+                "Follow the flow of your intuition. Does the new location feel like a sanctuary? If so, the move is a healing transition."
+            } else {
+                "Movement brings new energy. Ensure you are not running away, but running toward a new horizon."
+            }
+        } else if (question.contains("love") || question.contains("relationship") || question.contains("marry")) {
+            advice = if (isEarth) {
+                "Stability is your love language. Do not rush. If it is built on stone, it will last. If it is built on sand, wait."
+            } else {
+                "The heart is in transit. Look for a partner who challenges your mind but respects your freedom."
+            }
+        } else if (question.contains("job") || question.contains("career") || question.contains("money")) {
+             advice = "Saturn is watching your ambition. The old ways of working are fading. Innovation is required. Build slowly."
+        } else {
+            // General Advice
+            advice = "The $sign sun shines upon this query. The universe suggests patience. Trust your initial instinct, for it is the whisper of the stars."
+        }
+
+        return "--- THE REPORT ---\n\n" +
+               "Subject Sign: $sign\n" +
+               "Query Analysis: Complete\n\n" +
+               "VERDICT:\n$advice"
+    }
+}
