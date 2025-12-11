@@ -2,45 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Science Web Oracle
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>The Astrologist Oracle</title>
     <style>
-        /* THE AESTHETIC (CSS) */
+        /* --- THE AESTHETIC (CSS) --- */
         body {
-            background-color: #0F172A; /* Midnight Blue */
-            color: #E2E8F0;
+            background-color: #0F172A; /* Deep Midnight */
+            color: #E2E8F0; /* Starlight White */
             font-family: 'Georgia', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
             width: 100%;
             max-width: 400px;
             text-align: center;
+            background: #1E293B;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
         }
 
         h1 {
-            color: #C0A062; /* Antique Gold */
-            letter-spacing: 2px;
-            margin-bottom: 30px;
+            color: #C0A062; /* Gold */
             font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        p.subtitle {
+            color: #94A3B8;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Inputs */
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #C0A062;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
 
         input, textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background-color: #1E293B;
-            border: 1px solid #C0A062;
+            padding: 14px;
+            margin-bottom: 20px;
+            background-color: #0F172A;
+            border: 1px solid #475569;
             color: #FFF;
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: sans-serif;
-            box-sizing: border-box; /* Ensures padding doesn't widen element */
+            font-size: 1rem;
+            box-sizing: border-box; /* Fixes width issues */
+        }
+
+        input:focus, textarea:focus {
+            border-color: #C0A062;
+            outline: none;
         }
 
         textarea {
@@ -48,9 +76,10 @@
             resize: none;
         }
 
-        button {
+        /* Buttons */
+        .btn-primary {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background-color: #C0A062;
             color: #0F172A;
             border: none;
@@ -58,111 +87,188 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            border-radius: 4px;
-            margin-bottom: 30px;
+            border-radius: 6px;
+            font-size: 1rem;
             transition: background 0.3s;
         }
 
-        button:hover {
+        .btn-primary:hover {
             background-color: #D4B478;
         }
 
-        #output {
+        .btn-secondary {
+            background: transparent;
+            color: #94A3B8;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        /* Views (Screens) */
+        .view-section {
             display: none; /* Hidden by default */
-            background-color: #1E293B;
-            padding: 20px;
-            border-left: 4px solid #C0A062;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Result Box */
+        #resultText {
             text-align: left;
             line-height: 1.6;
-            white-space: pre-wrap; /* Preserves formatting */
+            white-space: pre-wrap;
+            color: #E2E8F0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Cosmic Science Web Oracle</h1>
         
-        <input type="text" id="dateInput" placeholder="Date of Birth (MM/DD)">
-        <textarea id="questionInput" placeholder="What do you seek?"></textarea>
-        
-        <button onclick="consultStars()">Consult the Stars</button>
+        <div id="screen-input" class="view-section active">
+            <h1>The Oracle</h1>
+            <p class="subtitle">Enter your coordinates to receive guidance.</p>
 
-        <div id="output"></div>
+            <label>DATE OF BIRTH</label>
+            <input type="date" id="dobInput">
+
+            <label>YOUR QUESTION</label>
+            <textarea id="questionInput" placeholder="e.g. Should I move to a new city?"></textarea>
+
+            <button class="btn-primary" onclick="goToGate()">Consult the Stars</button>
+        </div>
+
+        <div id="screen-gate" class="view-section">
+            <h1>Almost There</h1>
+            <p class="subtitle">The stars have aligned. Where shall we send a copy of your reading?</p>
+
+            <label>EMAIL ADDRESS (Optional)</label>
+            <input type="email" id="emailInput" placeholder="you@example.com">
+
+            <button class="btn-primary" onclick="revealFate()">Reveal My Fate</button>
+            <button class="btn-secondary" onclick="revealFate()">Skip this step</button>
+        </div>
+
+        <div id="screen-result" class="view-section">
+            <h1>The Verdict</h1>
+            <div id="resultText"></div>
+            <button class="btn-secondary" onclick="location.reload()" style="margin-top:30px;">Ask Another Question</button>
+        </div>
+
     </div>
 
     <script>
-        /* THE LOGIC (JavaScript) */
+        /* --- THE LOGIC (JavaScript) --- */
         
-        function consultStars() {
-            const dateStr = document.getElementById('dateInput').value;
-            const question = document.getElementById('questionInput').value.toLowerCase();
-            const outputDiv = document.getElementById('output');
+        // Variables to store user data
+        let userSign = "";
+        let userQuestion = "";
 
-            if (!dateStr || !question) {
-                alert("The stars require your data.");
+        // Step 1: Validate and Move to Email Gate
+        function goToGate() {
+            const dob = document.getElementById('dobInput').value;
+            const question = document.getElementById('questionInput').value;
+
+            if (!dob) {
+                alert("Please enter your Date of Birth.");
+                return;
+            }
+            if (!question.trim()) {
+                alert("The stars cannot answer a silent question.");
                 return;
             }
 
-            // 1. Determine Sign
-            const sign = getZodiacSign(dateStr);
-            
-            // 2. Oracle Logic
-            const answer = getOracleAnswer(sign, question);
+            // Calculate Sign Immediately
+            userSign = getZodiacSign(dob);
+            userQuestion = question.toLowerCase();
 
-            // 3. Reveal
-            outputDiv.style.display = 'block';
-            outputDiv.textContent = answer;
+            // Switch Screens
+            document.getElementById('screen-input').classList.remove('active');
+            document.getElementById('screen-gate').classList.add('active');
         }
 
-        function getZodiacSign(date) {
-            // Simple MM/DD parser
-            const parts = date.split('/');
-            if (parts.length < 2) return "Unknown";
-            const m = parseInt(parts[0]);
-            const d = parseInt(parts[1]);
+        // Step 2: Skip or Submit Email -> Show Result
+        function revealFate() {
+            // (Optional) Here you could send the email to a database if you wanted
+            // For now, we just move to the result.
 
-            if ((m == 1 && d >= 20) || (m == 2 && d <= 18)) return "Aquarius";
-            if ((m == 2 && d >= 19) || (m == 3 && d <= 20)) return "Pisces";
-            if ((m == 3 && d >= 21) || (m == 4 && d <= 19)) return "Aries";
-            if ((m == 4 && d >= 20) || (m == 5 && d <= 20)) return "Taurus";
-            if ((m == 5 && d >= 21) || (m == 6 && d <= 20)) return "Gemini";
-            if ((m == 6 && d >= 21) || (m == 7 && d <= 22)) return "Cancer";
-            if ((m == 7 && d >= 23) || (m == 8 && d <= 22)) return "Leo";
-            if ((m == 8 && d >= 23) || (m == 9 && d <= 22)) return "Virgo";
-            if ((m == 9 && d >= 23) || (m == 10 && d <= 22)) return "Libra";
-            if ((m == 10 && d >= 23) || (m == 11 && d <= 21)) return "Scorpio";
-            if ((m == 11 && d >= 22) || (m == 12 && d <= 21)) return "Sagittarius";
-            if ((m == 12 && d >= 22) || (m == 1 && d <= 19)) return "Capricorn";
+            const answer = generateOracleAnswer(userSign, userQuestion);
+            
+            const resultBox = document.getElementById('resultText');
+            resultBox.textContent = answer;
+
+            // Switch Screens
+            document.getElementById('screen-gate').classList.remove('active');
+            document.getElementById('screen-result').classList.add('active');
+        }
+
+        // Helper: Calculate Zodiac Sign from YYYY-MM-DD
+        function getZodiacSign(dateString) {
+            const date = new Date(dateString);
+            const day = date.getUTCDate(); // Use UTC to avoid timezone shifts
+            const month = date.getUTCMonth() + 1; // Months are 0-11
+
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Aquarius";
+            if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return "Pisces";
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Aries";
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Taurus";
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "Gemini";
+            if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "Cancer";
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Leo";
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Virgo";
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "Libra";
+            if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "Scorpio";
+            if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "Sagittarius";
+            if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return "Capricorn";
             return "Unknown";
         }
 
-        function getOracleAnswer(sign, q) {
+        // Helper: Generate Text
+        function generateOracleAnswer(sign, q) {
             const isEarth = ["Taurus", "Virgo", "Capricorn"].includes(sign);
             const isWater = ["Cancer", "Scorpio", "Pisces"].includes(sign);
+            const isFire = ["Aries", "Leo", "Sagittarius"].includes(sign);
             
             let advice = "";
 
-            if (q.includes("move") || q.includes("home") || q.includes("live")) {
+            if (q.includes("move") || q.includes("home") || q.includes("live") || q.includes("relocate")) {
                 if (isEarth) {
-                    advice = `The stars favor this foundation. As a ${sign}, you thrive where you can plant roots. Look for financial stability in this move. The omen is solid.`;
+                    advice = `As a ${sign}, you are Earth. You thrive on stability. The stars suggest this move is favorable ONLY if it increases your financial or physical security. Look for a foundation of stone, not sand.`;
                 } else if (isWater) {
-                    advice = `Follow the flow of your intuition. Does the new location feel like a sanctuary? If so, the move is a healing transition.`;
+                    advice = `As a ${sign}, you are Water. You must follow your intuition. If the new location feels like a 'sanctuary', it is right. If it feels cold or exposed, stay where you are.`;
                 } else {
-                    advice = `Movement brings new energy. Ensure you are not running away, but running toward a new horizon.`;
+                    advice = `Movement is natural for you. The stars indicate a new horizon is necessary for your growth. Do not look back.`;
                 }
-            } else if (q.includes("love") || q.includes("marry")) {
+            } else if (q.includes("love") || q.includes("relationship") || q.includes("marry") || q.includes("partner")) {
                 if (isEarth) {
-                    advice = `Stability is your love language. Do not rush. If it is built on stone, it will last. If it is built on sand, wait.`;
+                    advice = `Patience is your ally. A solid relationship is built slowly. If you are rushing, stop. If you are building, continue.`;
                 } else {
-                    advice = `The heart is in transit. Look for a partner who challenges your mind but respects your freedom.`;
+                    advice = `Your heart seeks adventure, but Saturn demands maturity. Ensure your partner respects your need for freedom before you commit.`;
                 }
+            } else if (q.includes("money") || q.includes("job") || q.includes("career") || q.includes("work")) {
+                advice = `The planetary alignment suggests a shift in your professional sector. Innovation is required. The 'old ways' of working will no longer yield the same harvest.`;
             } else {
-                advice = `The ${sign} sun shines upon this query. The universe suggests patience. Trust your initial instinct, for it is the whisper of the stars.`;
+                advice = `The universe acknowledges your query. For a ${sign}, the current transit suggests you trust your gut instinct. The answer you seek is already within you; quiet your mind to hear it.`;
             }
 
-            return `--- THE REPORT ---\n\nSubject Sign: ${sign}\nQuery Analysis: Complete\n\nVERDICT:\n${advice}`;
+            return `--- THE STAR CHART ---\n\nSign: ${sign}\nFocus: ${getCategory(q)}\n\nTHE ORACLE SPEAKS:\n${advice}`;
         }
+
+        function getCategory(q) {
+            if (q.includes("move")) return "Relocation";
+            if (q.includes("love")) return "Relationships";
+            return "General Guidance";
+        }
+
     </script>
 </body>
 </html>
